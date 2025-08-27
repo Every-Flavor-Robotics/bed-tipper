@@ -289,45 +289,6 @@ execute_motion_output_t execute_motion(const execute_motion_input_t& input)
   }
 }
 
-// else
-// {
-//   Serial.println("Regular tilt routine");
-//   Serial.print("Current roll: ");
-//   Serial.print(roll);
-//   Serial.print(" Target angle: ");
-//   Serial.println(data.target_angle);
-//   Serial.print(" Current tilt state: ");
-//   Serial.print(cur_tilt_state);
-//   Serial.print(" Target tilt state: ");
-//   Serial.println(data.target_tilt_state, 4);
-
-//   // Implement the logic to move the table to the target angle
-//   //   BANG BANG Controller baby
-//   if (data.target_tilt_state > 0 && roll > data.target_angle)
-//   {
-//     // Rolling right
-//     // This means we only extend the left motors
-//     motor1.set_power(1.0);
-//     motor2.set_power(1.0);
-//     cur_tilt_state = -1;  // Update current tilt state
-//   }
-//   else if (data.target_tilt_state < 0 && roll < data.target_angle)
-//   {
-//     // Rolling left
-//     // This means we only extend the right motors
-//     motor3.set_power(1.0);
-//     motor4.set_power(1.0);
-//     cur_tilt_state = 1;  // Update current tilt state
-//   }
-//   else
-//   {
-//     data.state = MOTION_STATE_COMPLETE;
-//     return data;
-//   }
-// }
-// return data;
-// }
-
 execute_motion_output_t start_motion(float cur_angle, float zero,
                                      float target_angle, float angle_tolerance,
                                      tilt_state_t cur_tilt_state,
@@ -471,17 +432,6 @@ void setup()
   delay(100);
   zero = get_roll();
 
-  //   motor1_est.setHysteresis(0.90f, 0.60f);
-  //   motor2_est.setHysteresis(0.90f, 0.60f);
-  //   motor3_est.setHysteresis(0.90f, 0.60f);
-  //   motor4_est.setHysteresis(0.90f, 0.60f);
-
-  //   //   motor1_est.setStickiness(1.0f, 0.0f);
-  //   motor1_est.setK0(0.15f);
-  //   //   motor1_est.setGainSoftPrior(0.01f);
-
-  //   motor1.set_power(-1.0);
-
   result =
       start_motion(get_roll(), zero, angle_sweep[cur_index] / RAD_TO_DEG,
                    ANGLE_TOLERANCE, result.motion.cur_tilt_state, millis());
@@ -514,55 +464,8 @@ void loop()
     }
 
     //
-    delay(1000);
     result =
         start_motion(get_roll(), zero, angle_sweep[cur_index] / RAD_TO_DEG,
                      ANGLE_TOLERANCE, result.motion.cur_tilt_state, millis());
   }
-
-  //   receiver.loop();
-
-  //   if (receiver.isConnected())
-  //   {
-  //     JoyBridge::JoystickData data = receiver.getJoystickData();
-  //     if (abs(data.left_y) > 0.1)
-  //     {
-  //       motor1.set_power(data.left_y);
-  //       motor2.set_power(data.left_y);
-  //     }
-  //     else
-  //     {
-  //       motor1.set_power(0);
-  //       motor2.set_power(0);
-  //     }
-
-  //     if (abs(data.right_y) > 0.1)
-  //     {
-  //       motor3.set_power(data.right_x);
-  //       motor4.set_power(data.right_x);
-  //     }
-  //     else
-  //     {
-  //       motor3.set_power(0);
-  //       motor4.set_power(0);
-  //     }
-  //   }
-
-  //   Print the gravity vector every 50 ms
-  //   if (millis() - last_print > 50)
-  //   {
-  //     Serial.print("Gravity Vector: ");
-  //     float x, y, z;
-  //     // Compute the magnitude
-  //     filter.getGravityVector(&x, &y, &z);
-  //     float square_mag = x * x + y * y + z * z;
-
-  //     // Print gravity vector with fixed width and precision
-  //     char buf[64];
-  //     snprintf(buf, sizeof(buf), "%8.4f, %8.4f, %8.4f, %8.4f", x, y, z,
-  //              square_mag);
-  //     Serial.println(buf);
-
-  //     last_print = millis();
-  //   }
 }
